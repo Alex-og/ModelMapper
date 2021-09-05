@@ -5,6 +5,6 @@ import java.lang.reflect.InvocationTargetException;
 /**
  * @author Oleksandr Haleta
  */
-public interface MapperService {
+public interface MapperService<U, T> {
     void bind() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException, NoSuchFieldException;
 }

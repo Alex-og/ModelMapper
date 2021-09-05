@@ -11,7 +11,7 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Optional;
 
-public class MapperServiceImpl<U, T> implements MapperService<U, T> {
+public class MapperServiceImpl<U, T> implements MapperService {
     private final U source;
     private final T target;
 

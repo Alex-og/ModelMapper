@@ -1,4 +1,4 @@
-package utils;
+package app.utils;
 
 public class Pair<K, V> {
     private K k;

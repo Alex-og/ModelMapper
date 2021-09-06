@@ -28,28 +28,38 @@ public class MapperServiceImpl<U, T> implements MapperService<U, T> {
         Method[] sourceGetters = getGetters(source);
         Method[] targetSetters = getSetters(target);
         if (sourceGetters.length > 0 && targetSetters.length > 0) {
-            for (Method sourceGetter : sourceGetters) {
-                if (hasInstanceFieldAnnotation(sourceGetter) && !hasExcludeAnnotation(sourceGetter)) {
-                    Method targetSetter = findMatchSetter(sourceGetter.getName(), targetSetters)
-                            .orElseThrow(NoSuchMethodException::new);
-                    sourceGetter.setAccessible(true);
-                    targetSetter.setAccessible(true);
-                    targetSetter.invoke(target, sourceGetter.invoke(source, null));
+            delegateDataToTargetSetters(sourceGetters, targetSetters);
+        } else {
+            delegateDataToTargetFields();
+        }
+    }
+
+    private void delegateDataToTargetFields() throws NoSuchFieldException, IllegalAccessException {
+        Field[] sourceFields = getFields(source);
+        Field[] targetFields = getFields(target);
+        if (sourceFields.length > 0 && targetFields.length > 0) {
+            for (Field field : sourceFields) {
+                if (hasInstanceFieldAnnotationField(field) && !hasExcludeAnnotationField(field)) {
+                    Field targetField = target.getClass().getDeclaredField(field.getName());
+                    Field sourceField = source.getClass().getDeclaredField(field.getName());
+                    sourceField.setAccessible(true);
+                    targetField.setAccessible(true);
+                    targetField.set(target, sourceField.get(source));
                 }
             }
-        } else {
-            Field[] sourceFields = getFields(source);
-            Field[] targetFields = getFields(target);
-            if (sourceFields.length > 0 && targetFields.length > 0) {
-                for (Field field : sourceFields) {
-                    if (hasInstanceFieldAnnotationField(field) && !hasExcludeAnnotationField(field)) {
-                        Field targetField = target.getClass().getDeclaredField(field.getName());
-                        Field sourceField = source.getClass().getDeclaredField(field.getName());
-                        sourceField.setAccessible(true);
-                        targetField.setAccessible(true);
-                        targetField.set(target, sourceField.get(source));
-                    }
-                }
+        }
+    }
+
+    private void delegateDataToTargetSetters(Method[] sourceGetters, Method[] targetSetters)
+            throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+
+        for (Method sourceGetter : sourceGetters) {
+            if (hasInstanceFieldAnnotation(sourceGetter) && !hasExcludeAnnotation(sourceGetter)) {
+                Method targetSetter = findMatchSetter(sourceGetter.getName(), targetSetters)
+                        .orElseThrow(NoSuchMethodException::new);
+                sourceGetter.setAccessible(true);
+                targetSetter.setAccessible(true);
+                targetSetter.invoke(target, sourceGetter.invoke(source, null));
             }
         }
     }
@@ -70,9 +80,9 @@ public class MapperServiceImpl<U, T> implements MapperService<U, T> {
     }
 
     private Optional<Method> findMatchSetter(String getterName, Method[] targetSetters) {
-        String s = getterName.replaceAll("get", "");
+        String s = getterName.substring(3);
         return Arrays.stream(targetSetters)
-                .filter(x -> x.getName().replaceAll("set", "").equals(s)).findFirst();
+                .filter(x -> x.getName().substring(3).equals(s)).findFirst();
     }
 
     private boolean hasInstanceFieldAnnotationField(Field sourceField) {

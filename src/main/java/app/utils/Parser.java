@@ -7,8 +7,8 @@ import java.util.Arrays;
 public class Parser  {
     private Object source;
 
-    public <T> void setSource(T t) {
-        this.source = t;
+    public <T> void setSource(T source) {
+        this.source = source;
     }
 
     public <T> Field[] getFields() {

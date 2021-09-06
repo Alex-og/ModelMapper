@@ -3,6 +3,7 @@ package app.service;
 import app.annotations.Exclude;
 import app.annotations.InstanceField;
 import app.utils.Parser;
+import app.utils.ParserImpl;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
@@ -20,7 +21,7 @@ public class MapperServiceImpl<U, T> implements MapperService<U, T> {
     public MapperServiceImpl(U source, T target) {
         this.source = source;
         this.target = target;
-        this.parser = new Parser();
+        this.parser = new ParserImpl();
     }
 
     @Override
@@ -53,13 +54,13 @@ public class MapperServiceImpl<U, T> implements MapperService<U, T> {
     private void delegateDataToTargetSetters(Method[] sourceGetters, Method[] targetSetters)
             throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
 
-        for (Method sourceGetter : sourceGetters) {
-            if (hasInstanceFieldAnnotation(sourceGetter) && !hasExcludeAnnotation(sourceGetter)) {
-                Method targetSetter = findMatchSetter(sourceGetter.getName(), targetSetters)
+        for (int i = 0; i < sourceGetters.length; i++) {
+            if (hasInstanceFieldAnnotation(sourceGetters[i]) && !hasExcludeAnnotation(sourceGetters[i])) {
+                Method targetSetter = findMatchSetter(sourceGetters[i].getName(), targetSetters)
                         .orElseThrow(NoSuchMethodException::new);
-                sourceGetter.setAccessible(true);
+                sourceGetters[i].setAccessible(true);
                 targetSetter.setAccessible(true);
-                targetSetter.invoke(target, sourceGetter.invoke(source, null));
+                targetSetter.invoke(target, sourceGetters[i].invoke(source, null));
             }
         }
     }

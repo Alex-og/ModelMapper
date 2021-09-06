@@ -35,12 +35,12 @@ public class ModelMapperTest {
             this.address = address;
         }
 
-        @InstanceField("items")
+        @InstanceField
         public List<String> getItems() {
             return items;
         }
 
-        @InstanceField("items")
+        @InstanceField
         public void setItems(List<String> items) {
             this.items = items;
             exclude = "Exclude";
@@ -93,12 +93,12 @@ public class ModelMapperTest {
             this.address = address;
         }
 
-        @InstanceField("items")
+        @InstanceField
         public List<String> getItems() {
             return items;
         }
 
-        @InstanceField("items")
+        @InstanceField
         public void setItems(List<String> items) {
             this.items = items;
         }
@@ -175,6 +175,7 @@ public class ModelMapperTest {
                     '}';
         }
     }
+
 
     @Test
     public void shouldDelegateDataToDTO() {

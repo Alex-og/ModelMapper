@@ -1,7 +1,7 @@
 package app.service;
 
-import app.model.Exclude;
-import app.model.InstanceField;
+import app.annotations.Exclude;
+import app.annotations.InstanceField;
 import app.utils.Parser;
 
 import java.lang.annotation.Annotation;

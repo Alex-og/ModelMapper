@@ -1,7 +1,7 @@
 package app;
 
-import app.model.Exclude;
-import app.model.InstanceField;
+import app.annotations.Exclude;
+import app.annotations.InstanceField;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
